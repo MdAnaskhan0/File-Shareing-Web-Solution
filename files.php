@@ -51,7 +51,12 @@ if (isset($_GET['share'])) {
     $stmt->bind_param("si", $token, $fileId);
     $stmt->execute();
     $stmt->close();
-    $shareLink = "http://localhost:8080/fileshare/share.php?token=$token";
+
+    // Detect base URL dynamically
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    $baseUrl = $protocol . "://" . $host . dirname($_SERVER['PHP_SELF']);
+    $shareLink = $baseUrl . "/share.php?token=$token";
 }
 
 // Fetch files
@@ -85,7 +90,7 @@ $files = $conn->query("SELECT * FROM files ORDER BY uploaded_at DESC");
         </tr>
         <?php while ($row = $files->fetch_assoc()) { ?>
         <tr>
-            <td><a href="share.php?id=<?php echo $row['id']; ?>"><?php echo htmlspecialchars($row['filename']); ?></a></td>
+            <td><a href="share.php?token=<?php echo $row['share_token']; ?>"><?php echo htmlspecialchars($row['filename']); ?></a></td>
             <td><?php echo htmlspecialchars($row['uploaded_by']); ?></td>
             <td>
                 <?php if ($user['role'] === 'admin') { ?>
@@ -94,7 +99,7 @@ $files = $conn->query("SELECT * FROM files ORDER BY uploaded_at DESC");
                 <?php if ($user['role'] === 'admin' || $row['uploaded_by'] === $user['username']) { ?>
                     <a href="files.php?share=<?php echo $row['id']; ?>">Generate Share Link</a><br>
                     <?php if (!empty($row['share_token'])) { ?>
-                        <input type="text" value="http://localhost:8080/fileshare/share.php?token=<?php echo $row['share_token']; ?>" readonly style="width:300px;">
+                        <input type="text" value="<?php echo $baseUrl . '/share.php?token=' . $row['share_token']; ?>" readonly style="width:300px;">
                     <?php } ?>
                 <?php } ?>
             </td>
