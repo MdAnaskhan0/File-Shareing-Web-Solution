@@ -8,12 +8,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Login</h2>
-    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <button type="submit">Login</button>
-    </form>
+    <div class="login-container card">
+        <div class="login-header">
+            <h1>FileShare</h1>
+            <p>Secure file sharing platform</p>
+        </div>
+        
+        <?php if (!empty($error)) echo "<div class='alert alert-error'>$error</div>"; ?>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input class="form-input" type="text" name="username" id="username" placeholder="Enter your username" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" name="password" id="password" placeholder="Enter your password" required>
+            </div>
+            
+            <button class="btn" type="submit" style="width: 100%">Sign In</button>
+        </form>
+    </div>
 </body>
 </html>

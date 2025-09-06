@@ -17,8 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
 
     if ($stmt->execute()) {
         $msg = "✅ User created successfully!";
+        $msgType = "success";
     } else {
         $msg = "❌ Error: " . $conn->error;
+        $msgType = "error";
     }
     $stmt->close();
 }
@@ -38,8 +40,10 @@ if (isset($_GET['delete'])) {
 
         $conn->query("DELETE FROM users WHERE id=$userId");
         $msg = "🗑️ User and their files deleted!";
+        $msgType = "success";
     } else {
-        $msg = "⚠️ You can’t delete yourself!";
+        $msg = "⚠️ You can't delete yourself!";
+        $msgType = "error";
     }
 }
 
@@ -49,48 +53,97 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel - File Sharing</title>
+    <title>Admin Panel - File Sharing System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Admin Panel</h2>
-    <a href="files.php">Back to Files</a> | <a href="auth.php?logout=1">Logout</a>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="files.php" class="brand">FileShare</a>
+                <div class="nav-links">
+                    <span>Admin Panel</span>
+                    <a href="files.php" class="nav-link">Back to Files</a>
+                    <a href="auth.php?logout=1" class="nav-link logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-    <?php if (!empty($msg)) echo "<p style='color:blue;'>$msg</p>"; ?>
+    <main class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+        <div class="page-header">
+            <h1 class="page-title">Admin Panel</h1>
+        </div>
 
-    <h3>Create New User</h3>
-    <form method="POST">
-        <input type="hidden" name="create_user" value="1">
-        <input type="text" name="username" placeholder="Username" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <select name="role" required>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select><br><br>
-        <button type="submit">Create User</button>
-    </form>
+        <?php if (!empty($msg)) echo "<div class='alert alert-$msgType'>$msg</div>"; ?>
 
-    <h3>All Users</h3>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Action</th>
-        </tr>
-        <?php while ($row = $users->fetch_assoc()) { ?>
-        <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td><?php echo $row['username']; ?></td>
-            <td><?php echo $row['role']; ?></td>
-            <td>
-                <?php if ($row['id'] != $_SESSION['user']['id']) { ?>
-                    <a href="admin.php?delete=<?php echo $row['id']; ?>" onclick="return confirm('Delete this user and all their files?');">Delete</a>
-                <?php } else { ?>
-                    (You)
-                <?php } ?>
-            </td>
-        </tr>
-        <?php } ?>
-    </table>
+        <div class="card fade-in">
+            <h3 class="mb-3">Create New User</h3>
+            <form method="POST">
+                <input type="hidden" name="create_user" value="1">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <input class="form-input" type="text" name="username" placeholder="Enter username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input class="form-input" type="password" name="password" placeholder="Enter password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="role">Role</label>
+                        <select class="form-select" name="role" required>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" type="submit">Create User</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card fade-in">
+            <h3 class="mb-3">All Users</h3>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $users->fetch_assoc()) { ?>
+                        <tr>
+                            <td><?php echo $row['id']; ?></td>
+                            <td><?php echo $row['username']; ?></td>
+                            <td>
+                                <span style="padding: 0.25rem 0.5rem; border-radius: 4px; 
+                                    background-color: <?php echo $row['role'] === 'admin' ? 'rgba(67, 97, 238, 0.1)' : 'rgba(108, 117, 125, 0.1)'; ?>;
+                                    color: <?php echo $row['role'] === 'admin' ? 'var(--primary)' : 'var(--gray)'; ?>;">
+                                    <?php echo ucfirst($row['role']); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($row['id'] != $_SESSION['user']['id']) { ?>
+                                    <a href="admin.php?delete=<?php echo $row['id']; ?>" 
+                                       class="btn btn-danger btn-sm" 
+                                       onclick="return confirm('Delete this user and all their files?');">Delete</a>
+                                <?php } else { ?>
+                                    <span style="color: var(--gray);">(Current user)</span>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
