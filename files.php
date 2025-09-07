@@ -45,14 +45,27 @@ if (isset($_GET['delete']) && $user['role'] === 'admin') {
     exit();
 }
 
-// Generate public share token
+// Generate public share token (only if not already generated)
 if (isset($_GET['share'])) {
     $fileId = intval($_GET['share']);
-    $token = bin2hex(random_bytes(16)); // 32-char token
-    $stmt = $conn->prepare("UPDATE files SET share_token=? WHERE id=?");
-    $stmt->bind_param("si", $token, $fileId);
-    $stmt->execute();
-    $stmt->close();
+
+    // Check if file already has a token
+    $result = $conn->query("SELECT share_token FROM files WHERE id=$fileId");
+    if ($result->num_rows > 0) {
+        $file = $result->fetch_assoc();
+
+        if (!empty($file['share_token'])) {
+            // Reuse existing token
+            $token = $file['share_token'];
+        } else {
+            // Generate new token only if none exists
+            $token = bin2hex(random_bytes(16));
+            $stmt = $conn->prepare("UPDATE files SET share_token=? WHERE id=?");
+            $stmt->bind_param("si", $token, $fileId);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
 
     // Detect base URL dynamically
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
@@ -121,9 +134,13 @@ $files = $conn->query("SELECT * FROM files ORDER BY uploaded_at DESC");
                         <?php while ($row = $files->fetch_assoc()) { ?>
                         <tr>
                             <td>
-                                <a href="share.php?token=<?php echo $row['share_token']; ?>">
+                                <?php if (!empty($row['share_token'])) { ?>
+                                    <a href="share.php?token=<?php echo $row['share_token']; ?>">
+                                        <?php echo htmlspecialchars($row['filename']); ?>
+                                    </a>
+                                <?php } else { ?>
                                     <?php echo htmlspecialchars($row['filename']); ?>
-                                </a>
+                                <?php } ?>
                             </td>
                             <td><?php echo htmlspecialchars($row['uploaded_by']); ?></td>
                             <td><?php echo date('M j, Y g:i A', strtotime($row['uploaded_at'])); ?></td>
