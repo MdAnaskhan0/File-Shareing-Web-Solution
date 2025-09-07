@@ -25,6 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     $stmt->close();
 }
 
+// Change password
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    $userId = intval($_POST['user_id']);
+    $newPassword = md5($_POST['new_password']);
+    
+    $stmt = $conn->prepare("UPDATE users SET password=? WHERE id=?");
+    $stmt->bind_param("si", $newPassword, $userId);
+    
+    if ($stmt->execute()) {
+        $msg = "✅ Password changed successfully!";
+        $msgType = "success";
+    } else {
+        $msg = "❌ Error: " . $conn->error;
+        $msgType = "error";
+    }
+    $stmt->close();
+}
+
 // Delete user
 if (isset($_GET['delete'])) {
     $userId = intval($_GET['delete']);
@@ -101,6 +119,33 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                     </div>
                     
                     <button class="btn" type="submit">Create User</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card fade-in">
+            <h3 class="mb-3">Change Password</h3>
+            <form method="POST">
+                <input type="hidden" name="change_password" value="1">
+                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+                    <div class="form-group">
+                        <label class="form-label" for="user_id">Select User</label>
+                        <select class="form-select" name="user_id" required>
+                            <?php 
+                            $users_list = $conn->query("SELECT id, username FROM users ORDER BY username");
+                            while ($user = $users_list->fetch_assoc()) {
+                                echo "<option value='{$user['id']}'>{$user['username']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="new_password">New Password</label>
+                        <input class="form-input" type="password" name="new_password" placeholder="Enter new password" required>
+                    </div>
+                    
+                    <button class="btn" type="submit">Change Password</button>
                 </div>
             </form>
         </div>

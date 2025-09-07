@@ -44,7 +44,7 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <a href="files.php" class="brand">FileShare</a>
+                <p  class="brand">FileShare</p>
                 <div class="nav-links">
                     <span>File Preview</span>
                 </div>
@@ -55,6 +55,9 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
     <main class="container">
         <div class="preview-container card fade-in">
             <h2 class="text-center"><?php echo htmlspecialchars($file['filename']); ?></h2>
+            <?php if (!empty($file['description'])): ?>
+                <p class="text-center"><?php echo htmlspecialchars($file['description']); ?></p>
+            <?php endif; ?>
             
             <div class="preview-content">
                 <?php
