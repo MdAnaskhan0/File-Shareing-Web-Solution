@@ -10,7 +10,7 @@
 <body>
     <div class="login-container card">
         <div class="login-header">
-            <h1>FileShare</h1>
+            <h1>Fashion Cloud</h1>
             <p>Secure file sharing platform</p>
         </div>
         

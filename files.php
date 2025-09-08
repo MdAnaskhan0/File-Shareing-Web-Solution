@@ -159,7 +159,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
         <div class="container">
             <nav class="nav">
                 <a href="files.php" class="brand">
-                    <i class="fas fa-file-shield"></i> FileShare
+                    <i class="fas fa-file-shield"></i> Fashion Cloud
                 </a>
                 <div class="nav-links">
                     <span class="user-welcome"><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($user['username']); ?></span>
@@ -254,38 +254,23 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             </form>
         </div>
 
-        <!-- Filters Section -->
-        <div class="card fade-in">
-            <div class="card-header">
-                <h3><i class="fas fa-filter"></i> File Filters</h3>
-            </div>
-            <div class="filters-content">
-                <form method="GET" class="filter-form">
-                    <div class="filter-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="search">
-                                <i class="fas fa-search"></i> Search Files
-                            </label>
-                            <input class="form-input" type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by filename or description">
-                        </div>
-                        
-                        <div class="form-group filter-actions">
-                            <button class="btn" type="submit">
-                                <i class="fas fa-filter"></i> Search
-                            </button>
-                            <a href="files.php" class="btn btn-outline">
-                                <i class="fas fa-times"></i> Clear
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <!-- File List Section -->
         <div class="card fade-in">
-            <div class="card-header">
+            <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
                 <h3><i class="fas fa-file"></i> File List</h3>
+                
+                <div class="file-list-search" style="display: flex; flex-grow: 1; max-width: 500px; gap: 0.5rem;">
+                    <input class="form-input" type="text" name="search" id="fileSearchInput" 
+                           value="<?php echo htmlspecialchars($search); ?>" 
+                           placeholder="Search by filename or description" style="flex-grow: 1;">
+                    <button class="btn" id="searchBtn">
+                        <i class="fas fa-search"></i> 
+                    </button>
+                    <a href="files.php" class="btn btn-outline">
+                        <i class="fas fa-times"></i> 
+                    </a>
+                </div>
+                
                 <span class="file-count"><?php echo $number_of_results; ?> files total</span>
             </div>
             <div class="table-container">
@@ -524,6 +509,22 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             fileInput.files = e.dataTransfer.files;
             const event = new Event('change', { bubbles: true });
             fileInput.dispatchEvent(event);
+        }
+    });
+    
+    // Search functionality
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        const searchValue = document.getElementById('fileSearchInput').value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('search', searchValue);
+        url.searchParams.delete('page'); // Reset to first page when searching
+        window.location.href = url.toString();
+    });
+    
+    // Allow pressing Enter to search
+    document.getElementById('fileSearchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('searchBtn').click();
         }
     });
     
@@ -782,15 +783,9 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
         border-radius: var(--border-radius);
     }
     
-    .filter-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 1rem;
-    }
-    
-    .filter-actions {
+    .file-list-search {
         display: flex;
-        align-items: flex-end;
+        align-items: center;
         gap: 0.5rem;
     }
     
@@ -901,12 +896,15 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             justify-content: space-between;
         }
         
-        .filter-grid {
-            grid-template-columns: 1fr;
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
         }
         
-        .filter-actions {
-            flex-direction: column;
+        .file-list-search {
+            width: 100%;
+            max-width: 100% !important;
         }
         
         .file-item {

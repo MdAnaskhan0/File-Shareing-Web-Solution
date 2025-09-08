@@ -78,7 +78,7 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <a href="files.php" class="brand">FileShare</a>
+                <a href="files.php" class="brand">Fashion Cloud</a>
                 <div class="nav-links">
                     <span>Admin Panel</span>
                     <a href="files.php" class="nav-link">Back to Files</a>

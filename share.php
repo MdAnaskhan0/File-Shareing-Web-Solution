@@ -44,7 +44,7 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <p  class="brand">FileShare</p>
+                <p  class="brand">Fashion Cloud</p>
                 <div class="nav-links">
                     <span>File Preview</span>
                 </div>

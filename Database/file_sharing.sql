@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 06, 2025 at 08:16 PM
+-- Generation Time: Sep 08, 2025 at 10:54 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,10 +31,19 @@ CREATE TABLE `files` (
   `id` int(11) NOT NULL,
   `filename` varchar(255) NOT NULL,
   `filepath` varchar(500) NOT NULL,
+  `description` text DEFAULT NULL,
   `uploaded_by` varchar(100) NOT NULL,
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `share_token` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `files`
+--
+
+INSERT INTO `files` (`id`, `filename`, `filepath`, `description`, `uploaded_by`, `uploaded_at`, `share_token`) VALUES
+(3, 'Portfolio.zip', 'uploads/68be8a39d6287_Portfolio.zip', 'Portfolio Site code', 'admin', '2025-09-08 07:48:09', 'aeca9592aead669535bbfbed8036cff5'),
+(4, 'Anas.jpg', 'uploads/68be8a483a225_Anas.jpg', 'Image', 'admin', '2025-09-08 07:48:24', 'f1de9127b2adafe28c0877497286201c');
 
 -- --------------------------------------------------------
 
@@ -55,7 +64,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`) VALUES
-(1, 'admin', '0192023a7bbd73250516f069df18b500', 'admin', '2025-09-06 17:44:00');
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin', '2025-09-06 17:44:00'),
+(2, 'anas', '60b348bb250144900f8c45be7f1284f8', 'user', '2025-09-08 07:41:59');
 
 --
 -- Indexes for dumped tables
@@ -83,13 +93,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
