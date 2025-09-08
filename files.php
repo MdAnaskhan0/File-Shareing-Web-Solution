@@ -351,17 +351,16 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                                             ?></span>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td title="<?php echo htmlspecialchars($row['description']); ?>">
                                         <?php
                                         $desc = htmlspecialchars($row['description']);
-                                        if (strlen($desc) > 100) {
-                                            echo substr($desc, 0, 45) . '...';
+                                        if (strlen($desc) > 30) {
+                                            echo substr($desc, 0, 30) . '...';
                                         } else {
                                             echo $desc;
                                         }
                                         ?>
                                     </td>
-
                                     <td><?php echo htmlspecialchars($row['uploaded_by']); ?></td>
                                     <td><?php echo date('M j, Y g:i A', strtotime($row['uploaded_at'])); ?></td>
                                     <td>
@@ -500,7 +499,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                     <div class="file-item-size">${formatFileSize(this.files[i].size)}</div>
                 </div>
                 <div class="file-item-description">
-                    <textarea name="description[]" placeholder="Add description between 20 words" rows="4" cols="50" onkeydown="if(event.key==='Enter'){event.preventDefault();this.value+=' ';}"> </textarea>
+                    <textarea name="description[]" placeholder="Add description between 100 words" rows="6" cols="60" onkeydown="if(event.key==='Enter'){event.preventDefault();this.value+=' ';}"> </textarea>
 
                 </div>
             `;
@@ -922,6 +921,32 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             height: 25px;
             font-size: 0.7rem;
         }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background: #333;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 999;
+            top: 100%;
+            /* show below */
+            left: 0;
+            white-space: pre-wrap;
+            min-width: 200px;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+        }
+
 
         @media (max-width: 768px) {
             .page-header {
