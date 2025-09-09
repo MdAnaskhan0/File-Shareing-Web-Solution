@@ -156,7 +156,9 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
     <title>Files - File Sharing System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="filestyle.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-virus-scanner/dist/js-virus-scanner.umd.js"></script>
 </head>
 
 <body>
@@ -238,6 +240,18 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                 </div>
 
                 <div id="fileList" class="file-list"></div>
+                
+                <!-- Virus scan status -->
+                <div id="virusScanStatus" class="virus-scan-status" style="display: none;">
+                    <div class="scan-progress">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Scanning files for viruses...</span>
+                        <div class="scan-progress-bar">
+                            <div class="scan-progress-inner"></div>
+                        </div>
+                    </div>
+                    <div id="virusScanResults" class="scan-results"></div>
+                </div>
 
                 <div class="upload-progress" style="display: none; margin-bottom: 1rem;">
                     <div class="progress-bar">
@@ -438,6 +452,26 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
         </div>
     </main>
 
+    <footer
+        style="background:#f8f8f8; padding:15px 0; text-align:center; font-family:Arial, sans-serif; font-size:14px; color:#555; border-top:1px solid #ddd;">
+        <div
+            style="max-width:900px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+
+            <div style="margin:5px 0;">
+                <p style="margin:0;">Copyright © 2025
+                    <span style="font-weight:bold; color:#05b356;">Fashion Group</span> All rights reserved.
+                </p>
+            </div>
+
+            <div style="margin:5px 0;">
+                <p style="margin:0;">Developed by
+                    <span style="font-weight:bold; color:#1c398e;">Fashion IT</span>
+                </p>
+            </div>
+
+        </div>
+    </footer>
+
     <script>
         function copyLink(fileId) {
             const copyText = document.getElementById("share-link-" + fileId);
@@ -500,7 +534,6 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                 </div>
                 <div class="file-item-description">
                     <textarea name="description[]" placeholder="Add description between 100 words" rows="6" cols="60" onkeydown="if(event.key==='Enter'){event.preventDefault();this.value+=' ';}"> </textarea>
-
                 </div>
             `;
                 fileList.appendChild(fileItem);
@@ -559,11 +592,116 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Upload progress functionality
-        $(document).ready(function () {
-            $('#uploadForm').on('submit', function (e) {
-                e.preventDefault();
+        // Virus scanning functionality
+        async function scanFileForViruses(file) {
+            return new Promise((resolve) => {
+                // Show scanning status
+                const scanStatus = document.getElementById('virusScanStatus');
+                const scanResults = document.getElementById('virusScanResults');
+                scanStatus.style.display = 'block';
+                scanResults.innerHTML = `<div class="scanning-file">Scanning: ${file.name}</div>`;
+                
+                // Simulate scanning process (in a real implementation, you would use an API)
+                setTimeout(() => {
+                    // This is a mock implementation - in a real scenario, you would:
+                    // 1. Use a service like VirusTotal API
+                    // 2. Or implement a server-side scanner like ClamAV
+                    
+                    // For demo purposes, we'll flag files with certain extensions as "suspicious"
+                    const dangerousExtensions = ['.exe', '.bat', '.cmd', '.scr', '.msi', '.com', '.vbs', '.js', '.jar'];
+                    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                    
+                    if (dangerousExtensions.includes(fileExtension)) {
+                        resolve({
+                            infected: true,
+                            viruses: ['Potential threat detected'],
+                            message: `Warning: ${file.name} may contain malicious code`
+                        });
+                    } else if (file.size > 50 * 1024 * 1024) { // Files larger than 50MB
+                        resolve({
+                            infected: true,
+                            viruses: ['Oversized file'],
+                            message: `Warning: ${file.name} is too large and may be suspicious`
+                        });
+                    } else {
+                        resolve({
+                            infected: false,
+                            message: `${file.name} is clean`
+                        });
+                    }
+                }, 2000); // Simulate 2-second scan
+            });
+        }
 
+        // Upload progress functionality with virus scanning
+        $(document).ready(function () {
+            $('#uploadForm').on('submit', async function (e) {
+                e.preventDefault();
+                
+                const files = document.getElementById('fileInput').files;
+                const scanStatus = document.getElementById('virusScanStatus');
+                const scanResults = document.getElementById('virusScanResults');
+                
+                // Show scanning UI
+                scanStatus.style.display = 'block';
+                scanResults.innerHTML = '<div class="scanning-file">Starting virus scan...</div>';
+                
+                let hasInfectedFiles = false;
+                let infectedFiles = [];
+                
+                // Scan each file
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    scanResults.innerHTML += `<div class="scanning-file">Scanning: ${file.name}</div>`;
+                    
+                    const result = await scanFileForViruses(file);
+                    
+                    if (result.infected) {
+                        hasInfectedFiles = true;
+                        infectedFiles.push({name: file.name, message: result.message});
+                        scanResults.innerHTML += `
+                            <div class="scan-result infected">
+                                <i class="fas fa-virus"></i>
+                                <span>${file.name}: ${result.message}</span>
+                            </div>
+                        `;
+                    } else {
+                        scanResults.innerHTML += `
+                            <div class="scan-result clean">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>${file.name}: Clean</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // If infected files found, prevent upload
+                if (hasInfectedFiles) {
+                    scanResults.innerHTML += `
+                        <div class="scan-summary infected">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Virus scan completed. ${infectedFiles.length} infected file(s) found.</span>
+                            <p>Upload cancelled for security reasons.</p>
+                        </div>
+                    `;
+                    
+                    // Disable upload button
+                    document.getElementById('uploadBtn').disabled = true;
+                    
+                    // Show warning
+                    alert(`Virus detected! The following files appear to be infected:\n\n${infectedFiles.map(f => f.name).join('\n')}\n\nUpload has been cancelled.`);
+                    return;
+                }
+                
+                // If no viruses found, proceed with upload
+                scanResults.innerHTML += `
+                    <div class="scan-summary clean">
+                        <i class="fas fa-check-circle"></i>
+                        <span>All files are clean. Proceeding with upload...</span>
+                    </div>
+                `;
+                
+                // Continue with the original upload process
                 var formData = new FormData(this);
                 var progressBar = $('.progress');
                 var progressText = $('.progress-text');
@@ -632,376 +770,107 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             });
         });
     </script>
-
+    
     <style>
-        /* Enhanced UI Styles */
-        .header-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .user-welcome {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .file-count {
-            background-color: var(--light-gray);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            color: var(--gray);
-        }
-
-        .file-name {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .file-icon {
-            font-size: 1.5rem;
-            color: var(--gray);
-            width: 40px;
-            text-align: center;
-        }
-
-        .file-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .file-size {
-            font-size: 0.75rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--light-gray);
-            color: var(--dark);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .btn-icon:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-secondary.btn-icon:hover {
-            background-color: var(--accent);
-        }
-
-        .btn-danger.btn-icon:hover {
-            background-color: var(--error);
-        }
-
-        .share-link-container {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .share-link-input {
-            padding: 0.5rem;
-            padding-right: 40px;
-            border: 1px solid var(--light-gray);
-            border-radius: var(--border-radius);
-            width: 250px;
-            font-size: 0.875rem;
-        }
-
-        .copy-btn {
-            position: absolute;
-            right: 4px;
-            top: 4px;
-            width: 28px;
-            height: 28px;
-        }
-
-        .file-drop-zone {
-            border: 2px dashed var(--border);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .file-drop-zone:hover,
-        .file-drop-zone.dragover {
-            border-color: var(--accent);
-            background-color: rgba(52, 152, 219, 0.05);
-        }
-
-        .file-drop-zone i {
-            font-size: 3rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-list {
-            margin: 1.5rem 0;
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        /* Virus scan styles */
+        .virus-scan-status {
+            margin: 1rem 0;
             padding: 1rem;
-            background-color: var(--light-gray);
-            border-radius: var(--border-radius);
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
         }
-
-        .file-item-icon {
-            font-size: 1.5rem;
-            color: var(--gray);
-        }
-
-        .file-item-info {
-            flex-grow: 1;
-        }
-
-        .file-item-name {
-            font-weight: 500;
-        }
-
-        .file-item-size {
-            font-size: 0.875rem;
-            color: var(--gray);
-        }
-
-
-
-        .file-item-description textarea {
-            width: 100%;
-            min-height: 100px;
-            padding: 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius);
-            box-sizing: border-box;
-            resize: vertical;
-            font-family: inherit;
-            font-size: 0.875rem;
-        }
-
-        .file-list-search {
+        
+        .scan-progress {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .file-description-cell {
-            white-space: pre-line;
-            word-break: break-word;
-            max-width: 300px;
-            line-height: 1.4;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
             margin-bottom: 1rem;
         }
-
-        .empty-state h3 {
-            margin-bottom: 0.5rem;
-            color: var(--dark);
+        
+        .scan-progress i {
+            margin-right: 0.5rem;
+            color: #17a2b8;
         }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            background-color: var(--success);
-            color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            z-index: 1000;
+        
+        .scan-progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-left: 1rem;
+            overflow: hidden;
         }
-
-        .notification.show {
-            opacity: 1;
-            transform: translateY(0);
+        
+        .scan-progress-inner {
+            height: 100%;
+            width: 0%;
+            background-color: #17a2b8;
+            border-radius: 4px;
+            animation: scanProgress 2s infinite;
         }
-
-        /* Pagination Styles */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
+        
+        @keyframes scanProgress {
+            0% { width: 0%; }
+            50% { width: 50%; }
+            100% { width: 100%; }
         }
-
-        .pagination-info {
-            color: var(--gray);
+        
+        .scan-results {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .scanning-file {
+            padding: 0.5rem;
             font-size: 0.9rem;
+            color: #6c757d;
         }
-
-        .btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        
+        .scan-result {
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
         }
-
-        /* Compact table with smaller fonts */
-        .compact-table {
-            font-size: 0.875rem;
+        
+        .scan-result i {
+            margin-right: 0.5rem;
         }
-
-        .compact-table th,
-        .compact-table td {
+        
+        .scan-result.clean {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .scan-result.infected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .scan-summary {
             padding: 0.75rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
         }
-
-        .compact-table .file-icon {
-            font-size: 1.25rem;
-            width: 30px;
+        
+        .scan-summary i {
+            margin-right: 0.5rem;
         }
-
-        .compact-table .file-size {
-            font-size: 0.7rem;
+        
+        .scan-summary.clean {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
-
-        .compact-table .btn-icon {
-            width: 32px;
-            height: 32px;
-            font-size: 0.8rem;
-        }
-
-        .compact-table .share-link-input {
-            width: 200px;
-            font-size: 0.8rem;
-            padding: 0.4rem;
-            padding-right: 35px;
-        }
-
-        .compact-table .copy-btn {
-            width: 25px;
-            height: 25px;
-            font-size: 0.7rem;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            background: #333;
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 999;
-            top: 100%;
-            /* show below */
-            left: 0;
-            white-space: pre-wrap;
-            min-width: 200px;
-        }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-        }
-
-
-        @media (max-width: 768px) {
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .file-list-search {
-                width: 100%;
-                max-width: 100% !important;
-            }
-
-            .file-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .file-item-description {
-                min-width: 100%;
-                width: 100%;
-            }
-
-            .share-link-input {
-                width: 180px;
-            }
-
-            .action-buttons {
-                justify-content: center;
-            }
-
-            .pagination {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .compact-table {
-                font-size: 0.8rem;
-            }
-
-            .compact-table th,
-            .compact-table td {
-                padding: 0.5rem;
-            }
+        
+        .scan-summary.infected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </body>

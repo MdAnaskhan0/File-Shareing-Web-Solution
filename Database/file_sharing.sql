@@ -37,19 +37,6 @@ CREATE TABLE `files` (
   `share_token` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `files`
---
-
-INSERT INTO `files` (`id`, `filename`, `filepath`, `description`, `uploaded_by`, `uploaded_at`, `share_token`) VALUES
-(3, 'Portfolio.zip', 'uploads/68be8a39d6287_Portfolio.zip', 'Portfolio Site code', 'admin', '2025-09-08 07:48:09', 'aeca9592aead669535bbfbed8036cff5'),
-(4, 'Anas.jpg', 'uploads/68be8a483a225_Anas.jpg', 'Image', 'admin', '2025-09-08 07:48:24', 'f1de9127b2adafe28c0877497286201c');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,

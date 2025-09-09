@@ -34,17 +34,19 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($file['filename']); ?> - File Sharing System</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <p  class="brand">Fashion Cloud</p>
+                <p class="brand">Fashion Cloud</p>
                 <div class="nav-links">
                     <span>File Preview</span>
                 </div>
@@ -58,7 +60,7 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
             <?php if (!empty($file['description'])): ?>
                 <p class="text-center"><?php echo htmlspecialchars($file['description']); ?></p>
             <?php endif; ?>
-            
+
             <div class="preview-content">
                 <?php
                 $ext = strtolower(pathinfo($file['filename'], PATHINFO_EXTENSION));
@@ -90,5 +92,25 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
             </div>
         </div>
     </main>
+
+    <footer
+        style="background:#f8f8f8; padding:15px 0; text-align:center; font-family:Arial, sans-serif; font-size:14px; color:#555; border-top:1px solid #ddd;">
+        <div
+            style="max-width:900px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+
+            <div style="margin:5px 0;">
+                <p style="margin:0;">Copyright © 2025
+                    <span style="font-weight:bold; color:#05b356;">Fashion Group</span> All rights reserved.
+                </p>
+            </div>
+
+            <div style="margin:5px 0;">
+                <p style="margin:0;">Developed by
+                    <span style="font-weight:bold; color:#1c398e;">Fashion IT</span>
+                </p>
+            </div>
+        </div>
+    </footer>
 </body>
+
 </html>
