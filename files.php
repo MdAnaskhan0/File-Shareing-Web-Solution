@@ -340,10 +340,10 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                                                 $icon = $iconMap[strtolower($ext)];
                                             }
 
-                                            // Handle filename display (slice if longer than 70 chars)
+                                            // Handle filename display (slice if longer than 30 chars)
                                             $fullName = $row['filename'];
-                                            $displayName = (mb_strlen($fullName) > 30)
-                                                ? mb_strimwidth($fullName, 0, 30, '...')
+                                            $displayName = (mb_strlen($fullName) > 25)
+                                                ? mb_strimwidth($fullName, 0, 25, '...')
                                                 : $fullName;
                                             ?>
                                             <i class="far fa-<?php echo $icon; ?>"></i>
@@ -380,8 +380,8 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                                     <td title="<?php echo htmlspecialchars($row['description']); ?>">
                                         <?php
                                         $desc = htmlspecialchars($row['description']);
-                                        if (strlen($desc) > 30) {
-                                            echo substr($desc, 0, 30) . '...';
+                                        if (strlen($desc) > 25) {
+                                            echo substr($desc, 0, 25) . '...';
                                         } else {
                                             echo $desc;
                                         }
@@ -534,23 +534,31 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             fileList.innerHTML = '';
 
             for (let i = 0; i < this.files.length; i++) {
+                let fullName = this.files[i].name;
+                let displayName = fullName.length > 35
+                    ? fullName.substring(0, 35) + "..."
+                    : fullName;
+
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
                 fileItem.innerHTML = `
-                <div class="file-item-icon">
-                    <i class="far fa-file"></i>
-                </div>
-                <div class="file-item-info">
-                    <div class="file-item-name">${this.files[i].name}</div>
-                    <div class="file-item-size">${formatFileSize(this.files[i].size)}</div>
-                </div>
-                <div class="file-item-description">
-                    <textarea name="description[]" placeholder="Add description between 100 words" rows="6" cols="60" onkeydown="if(event.key==='Enter'){event.preventDefault();this.value+=' ';}"> </textarea>
-                </div>
-            `;
+            <div class="file-item-icon">
+                <i class="far fa-file"></i>
+            </div>
+            <div class="file-item-info">
+                <div class="file-item-name" title="${fullName}">${displayName}</div>
+                <div class="file-item-size">${formatFileSize(this.files[i].size)}</div>
+            </div>
+            <div class="file-item-description">
+                <textarea name="description[]" placeholder="Add description between 100 words" rows="6" cols="60" 
+                    onkeydown="if(event.key==='Enter'){event.preventDefault();this.value+=' ';}">
+                </textarea>
+            </div>
+        `;
                 fileList.appendChild(fileItem);
             }
         });
+
 
         // Drag and drop functionality
         const dropZone = document.getElementById('fileDropZone');
