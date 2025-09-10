@@ -240,7 +240,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                 </div>
 
                 <div id="fileList" class="file-list"></div>
-                
+
                 <!-- Virus scan status -->
                 <div id="virusScanStatus" class="virus-scan-status" style="display: none;">
                     <div class="scan-progress">
@@ -339,32 +339,44 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                                             if (array_key_exists(strtolower($ext), $iconMap)) {
                                                 $icon = $iconMap[strtolower($ext)];
                                             }
+
+                                            // Handle filename display (slice if longer than 70 chars)
+                                            $fullName = $row['filename'];
+                                            $displayName = (mb_strlen($fullName) > 30)
+                                                ? mb_strimwidth($fullName, 0, 30, '...')
+                                                : $fullName;
                                             ?>
                                             <i class="far fa-<?php echo $icon; ?>"></i>
                                         </div>
                                         <div class="file-info">
                                             <?php if (!empty($row['share_token'])) { ?>
-                                                <a href="share.php?token=<?php echo $row['share_token']; ?>">
-                                                    <?php echo htmlspecialchars($row['filename']); ?>
+                                                <a href="share.php?token=<?php echo $row['share_token']; ?>"
+                                                    title="<?php echo htmlspecialchars($fullName); ?>">
+                                                    <?php echo htmlspecialchars($displayName); ?>
                                                 </a>
                                             <?php } else { ?>
-                                                <?php echo htmlspecialchars($row['filename']); ?>
+                                                <span title="<?php echo htmlspecialchars($fullName); ?>">
+                                                    <?php echo htmlspecialchars($displayName); ?>
+                                                </span>
                                             <?php } ?>
-                                            <span class="file-size"><?php
-                                            $filePath = __DIR__ . "/" . $row['filepath'];
-                                            if (file_exists($filePath)) {
-                                                $size = filesize($filePath);
-                                                $units = ['B', 'KB', 'MB', 'GB'];
-                                                $index = 0;
-                                                while ($size >= 1024 && $index < count($units) - 1) {
-                                                    $size /= 1024;
-                                                    $index++;
+                                            <span class="file-size">
+                                                <?php
+                                                $filePath = __DIR__ . "/" . $row['filepath'];
+                                                if (file_exists($filePath)) {
+                                                    $size = filesize($filePath);
+                                                    $units = ['B', 'KB', 'MB', 'GB'];
+                                                    $index = 0;
+                                                    while ($size >= 1024 && $index < count($units) - 1) {
+                                                        $size /= 1024;
+                                                        $index++;
+                                                    }
+                                                    echo round($size, 2) . ' ' . $units[$index];
                                                 }
-                                                echo round($size, 2) . ' ' . $units[$index];
-                                            }
-                                            ?></span>
+                                                ?>
+                                            </span>
                                         </div>
                                     </td>
+
                                     <td title="<?php echo htmlspecialchars($row['description']); ?>">
                                         <?php
                                         $desc = htmlspecialchars($row['description']);
@@ -600,17 +612,17 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                 const scanResults = document.getElementById('virusScanResults');
                 scanStatus.style.display = 'block';
                 scanResults.innerHTML = `<div class="scanning-file">Scanning: ${file.name}</div>`;
-                
+
                 // Simulate scanning process (in a real implementation, you would use an API)
                 setTimeout(() => {
                     // This is a mock implementation - in a real scenario, you would:
                     // 1. Use a service like VirusTotal API
                     // 2. Or implement a server-side scanner like ClamAV
-                    
+
                     // For demo purposes, we'll flag files with certain extensions as "suspicious"
                     const dangerousExtensions = ['.exe', '.bat', '.cmd', '.scr', '.msi', '.com', '.vbs', '.js', '.jar'];
                     const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-                    
+
                     if (dangerousExtensions.includes(fileExtension)) {
                         resolve({
                             infected: true,
@@ -637,28 +649,28 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
         $(document).ready(function () {
             $('#uploadForm').on('submit', async function (e) {
                 e.preventDefault();
-                
+
                 const files = document.getElementById('fileInput').files;
                 const scanStatus = document.getElementById('virusScanStatus');
                 const scanResults = document.getElementById('virusScanResults');
-                
+
                 // Show scanning UI
                 scanStatus.style.display = 'block';
                 scanResults.innerHTML = '<div class="scanning-file">Starting virus scan...</div>';
-                
+
                 let hasInfectedFiles = false;
                 let infectedFiles = [];
-                
+
                 // Scan each file
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
                     scanResults.innerHTML += `<div class="scanning-file">Scanning: ${file.name}</div>`;
-                    
+
                     const result = await scanFileForViruses(file);
-                    
+
                     if (result.infected) {
                         hasInfectedFiles = true;
-                        infectedFiles.push({name: file.name, message: result.message});
+                        infectedFiles.push({ name: file.name, message: result.message });
                         scanResults.innerHTML += `
                             <div class="scan-result infected">
                                 <i class="fas fa-virus"></i>
@@ -674,7 +686,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                         `;
                     }
                 }
-                
+
                 // If infected files found, prevent upload
                 if (hasInfectedFiles) {
                     scanResults.innerHTML += `
@@ -684,15 +696,15 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                             <p>Upload cancelled for security reasons.</p>
                         </div>
                     `;
-                    
+
                     // Disable upload button
                     document.getElementById('uploadBtn').disabled = true;
-                    
+
                     // Show warning
                     alert(`Virus detected! The following files appear to be infected:\n\n${infectedFiles.map(f => f.name).join('\n')}\n\nUpload has been cancelled.`);
                     return;
                 }
-                
+
                 // If no viruses found, proceed with upload
                 scanResults.innerHTML += `
                     <div class="scan-summary clean">
@@ -700,7 +712,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                         <span>All files are clean. Proceeding with upload...</span>
                     </div>
                 `;
-                
+
                 // Continue with the original upload process
                 var formData = new FormData(this);
                 var progressBar = $('.progress');
@@ -770,7 +782,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             });
         });
     </script>
-    
+
     <style>
         /* Virus scan styles */
         .virus-scan-status {
@@ -780,18 +792,18 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             background-color: #f8f9fa;
             border: 1px solid #e9ecef;
         }
-        
+
         .scan-progress {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
         }
-        
+
         .scan-progress i {
             margin-right: 0.5rem;
             color: #17a2b8;
         }
-        
+
         .scan-progress-bar {
             flex-grow: 1;
             height: 8px;
@@ -800,7 +812,7 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             margin-left: 1rem;
             overflow: hidden;
         }
-        
+
         .scan-progress-inner {
             height: 100%;
             width: 0%;
@@ -808,24 +820,32 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             border-radius: 4px;
             animation: scanProgress 2s infinite;
         }
-        
+
         @keyframes scanProgress {
-            0% { width: 0%; }
-            50% { width: 50%; }
-            100% { width: 100%; }
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 50%;
+            }
+
+            100% {
+                width: 100%;
+            }
         }
-        
+
         .scan-results {
             max-height: 200px;
             overflow-y: auto;
         }
-        
+
         .scanning-file {
             padding: 0.5rem;
             font-size: 0.9rem;
             color: #6c757d;
         }
-        
+
         .scan-result {
             padding: 0.5rem;
             margin: 0.25rem 0;
@@ -833,21 +853,21 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             display: flex;
             align-items: center;
         }
-        
+
         .scan-result i {
             margin-right: 0.5rem;
         }
-        
+
         .scan-result.clean {
             background-color: #d4edda;
             color: #155724;
         }
-        
+
         .scan-result.infected {
             background-color: #f8d7da;
             color: #721c24;
         }
-        
+
         .scan-summary {
             padding: 0.75rem;
             margin-top: 1rem;
@@ -856,17 +876,17 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             display: flex;
             align-items: center;
         }
-        
+
         .scan-summary i {
             margin-right: 0.5rem;
         }
-        
+
         .scan-summary.clean {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        
+
         .scan-summary.infected {
             background-color: #f8d7da;
             color: #721c24;
