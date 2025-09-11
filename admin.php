@@ -122,7 +122,7 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                         <a class="nav-link" href="files.php"><i class="bi bi-folder me-1"></i>Back to Files</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="auth.php?logout=1"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+                        <a class="nav-link fw-bold" style="color: #CD2128;" href="auth.php?logout=1"><i class="bi bi-box-arrow-right me-1 "></i>Logout</a>
                     </li>
                 </ul>
             </div>
