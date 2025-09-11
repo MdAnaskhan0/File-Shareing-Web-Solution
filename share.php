@@ -39,80 +39,114 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($file['filename']); ?> - File Sharing System</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1 0 auto;
+        }
+        .footer {
+            flex-shrink: 0;
+        }
+        .preview-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .preview-content {
+            background-color: #f8f9fa;
+            border-radius: 0.375rem;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        .brand-text {
+            color: #4361ee;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
-    <header class="header">
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow p-3 mb-5 bg-body rounded">
+            <div class="container">
+                <div>
+                    <img src="image/logo.png" alt="Fashion Optics Ltd." class="img-fluid">
+                    <span class="navbar-brand fw-bold" style="color: #CD2128">Fashion Cloud</span>
+                </div>
+                <div class="navbar-nav ms-auto">
+                    <span class="nav-link" style="color: #000000">File Preview</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container py-4">
+            <div class="preview-container card shadow">
+                <div class="card-body">
+                    <h2 class="text-center mb-2"><?php echo htmlspecialchars($file['filename']); ?></h2>
+                    <?php if (!empty($file['description'])): ?>
+                        <p class="text-center text-muted"><?php echo htmlspecialchars($file['description']); ?></p>
+                    <?php endif; ?>
+
+                    <div class="preview-content">
+                        <?php
+                        $ext = strtolower(pathinfo($file['filename'], PATHINFO_EXTENSION));
+
+                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                            echo "<img src='" . htmlspecialchars($file['filepath']) . "' class='img-fluid' alt='Preview' style='max-height: 500px;'><br><br>";
+                        } elseif ($ext === 'pdf') {
+                            echo "<embed src='" . htmlspecialchars($file['filepath']) . "' type='application/pdf' width='100%' height='600'><br><br>";
+                        } elseif (in_array($ext, ['mp4', 'webm'])) {
+                            echo "<video controls class='w-100' style='max-width:600px;'><source src='" . htmlspecialchars($file['filepath']) . "' type='video/$ext'></video><br><br>";
+                        } elseif (in_array($ext, ['txt', 'log', 'csv', 'md'])) {
+                            echo "<div class='bg-white p-3 border rounded' style='max-height: 500px; overflow: auto;'>";
+                            echo "<pre class='mb-0'>" . htmlspecialchars(file_get_contents($filePath)) . "</pre>";
+                            echo "</div><br>";
+                        } else {
+                            echo "<div class='py-5'>";
+                            echo "<div style='font-size: 4rem; margin-bottom: 1rem;'><i class='bi bi-file-earmark'></i></div>";
+                            echo "<p class='text-muted'>Preview not available for this file type.</p>";
+                            echo "<p class='text-muted'>Please download the file to view it.</p>";
+                            echo "</div>";
+                        }
+                        ?>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="share.php?token=<?php echo urlencode($token); ?>&download=1" class="btn btn-primary">
+                            <i class="bi bi-download me-2"></i>Download File
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer bg-light py-3">
         <div class="container">
-            <nav class="nav">
-                <p class="brand">Fashion Cloud</p>
-                <div class="nav-links">
-                    <span>File Preview</span>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-2 mb-md-0">
+                    <p class="mb-0 text-muted">
+                        Copyright © 2025 <a href="https://fg-bd.com/" class="fw-bold text-success text-decoration-none">Fashion Group</a> All rights reserved.
+                    </p>
                 </div>
-            </nav>
-        </div>
-    </header>
-
-    <main class="container">
-        <div style="min-height: 87vh">
-            <div class="preview-container card fade-in">
-                <h2 class="text-center"><?php echo htmlspecialchars($file['filename']); ?></h2>
-                <?php if (!empty($file['description'])): ?>
-                    <p class="text-center"><?php echo htmlspecialchars($file['description']); ?></p>
-                <?php endif; ?>
-
-                <div class="preview-content">
-                    <?php
-                    $ext = strtolower(pathinfo($file['filename'], PATHINFO_EXTENSION));
-
-                    if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                        echo "<img src='" . htmlspecialchars($file['filepath']) . "' alt='Preview' style='max-width:100%; max-height:500px;'><br><br>";
-                    } elseif ($ext === 'pdf') {
-                        echo "<embed src='" . htmlspecialchars($file['filepath']) . "' type='application/pdf' width='100%' height='600'><br><br>";
-                    } elseif (in_array($ext, ['mp4', 'webm'])) {
-                        echo "<video controls width='100%' style='max-width:600px;'><source src='" . htmlspecialchars($file['filepath']) . "' type='video/$ext'></video><br><br>";
-                    } elseif (in_array($ext, ['txt', 'log', 'csv', 'md'])) {
-                        echo "<pre style='border:1px solid var(--light-gray); padding:1rem; max-width:100%; overflow:auto; margin:0 auto; text-align:left;'>";
-                        echo htmlspecialchars(file_get_contents($filePath));
-                        echo "</pre><br>";
-                    } else {
-                        echo "<div style='padding: 3rem; text-align: center;'>";
-                        echo "<div style='font-size: 4rem; margin-bottom: 1rem;'>📄</div>";
-                        echo "<p>Preview not available for this file type.</p>";
-                        echo "<p>Please download the file to view it.</p>";
-                        echo "</div>";
-                    }
-                    ?>
+                <div>
+                    <p class="mb-0 text-muted">
+                        Developed by <span class="fw-bold" style="color: #111184">Fashion Group IT</span>
+                    </p>
                 </div>
-
-                <div class="text-center mt-3">
-                    <a href="share.php?token=<?php echo urlencode($token); ?>&download=1" class="btn">
-                        ⬇️ Download File
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer
-        style="background:#f8f8f8; padding:15px 0; text-align:center; font-family:Arial, sans-serif; font-size:14px; color:#555; border-top:1px solid #ddd;">
-        <div
-            style="max-width:900px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-
-            <div style="margin:5px 0;">
-                <p style="margin:0;">Copyright © 2025
-                    <span style="font-weight:bold; color:#05b356;">Fashion Group</span> All rights reserved.
-                </p>
-            </div>
-
-            <div style="margin:5px 0;">
-                <p style="margin:0;">Developed by
-                    <span style="font-weight:bold; color:#1c398e;">Fashion IT</span>
-                </p>
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
