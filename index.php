@@ -61,6 +61,7 @@
                                     placeholder="Enter your password" required>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                            <p class="small text-muted mt-3">Powered by <span class="fw-bold" style="color: #CD2128">Fashion Optics Ltd.</span></p>
                         </form>
                     </div>
                 </div>
