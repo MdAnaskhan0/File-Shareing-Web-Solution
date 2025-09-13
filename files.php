@@ -525,11 +525,15 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
             <!-- File List Section -->
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                        <h5 class="mb-2 mb-md-0"><i class="fas fa-file me-1"></i>File List</h5>
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                        <!-- Left side -->
+                        <h5 class="mb-2 mb-md-0">
+                            <i class="fas fa-file me-1"></i> File List
+                        </h5>
 
-                        <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
-                            <div class="input-group me-sm-2" style="max-width: 500px;">
+                        <!-- Middle: Search -->
+                        <div class="flex-grow-1 mx-md-3" style="max-width: 500px;">
+                            <div class="input-group">
                                 <input type="text" class="form-control" name="search" id="fileSearchInput"
                                     value="<?php echo htmlspecialchars($search); ?>"
                                     placeholder="Search by filename or description">
@@ -540,10 +544,12 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
                                     <i class="fas fa-times"></i>
                                 </a>
                             </div>
-                            <span
-                                class="badge bg-secondary align-self-center align-self-sm-end"><?php echo $number_of_results; ?>
-                                files total</span>
                         </div>
+
+                        <!-- Right side -->
+                        <span class="badge bg-secondary">
+                            <?php echo $number_of_results; ?> files total
+                        </span>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -729,13 +735,15 @@ $files = $conn->query("SELECT * FROM files $whereSQL ORDER BY uploaded_at DESC L
     </main>
 
 
-    <footer class="footer bg-light py-3 mt-5">
+    <footer class="bg-light py-3 mt-auto" style="box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);">
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                 <div class="mb-2 mb-md-0">
                     <p class="mb-0 text-muted">
-                        Copyright © 2025 <a href="https://fg-bd.com/"
-                            class="fw-bold text-success text-decoration-none">Fashion Group</a> All rights reserved.
+                        Copyright © 2025
+                        <a href="https://fg-bd.com" target="_blank" class="fw-bold text-success text-decoration-none">
+                            Fashion Group
+                        </a> All rights reserved.
                     </p>
                 </div>
                 <div>

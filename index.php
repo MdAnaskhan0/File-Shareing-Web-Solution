@@ -61,7 +61,8 @@
                                     placeholder="Enter your password" required>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Sign In</button>
-                            <p class="small text-muted mt-3">Powered by <span class="fw-bold" style="color: #CD2128">Fashion Optics Ltd.</span></p>
+                            <p class="small text-muted mt-3">Powered by <span class="fw-bold"
+                                    style="color: #CD2128">Fashion Optics Ltd.</span></p>
                         </form>
                     </div>
                 </div>
@@ -69,13 +70,15 @@
         </div>
     </div>
 
-    <footer class="bg-light py-3 mt-auto">
+    <footer class="bg-light py-3 mt-auto" style="box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);">
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                 <div class="mb-2 mb-md-0">
                     <p class="mb-0 text-muted">
-                        Copyright © 2025 <a href="https://fg-bd.com"
-                            class="fw-bold text-success text-decoration-none">Fashion Group</a> All rights reserved.
+                        Copyright © 2025
+                        <a href="https://fg-bd.com" target="_blank" class="fw-bold text-success text-decoration-none">
+                            Fashion Group
+                        </a> All rights reserved.
                     </p>
                 </div>
                 <div>
@@ -86,6 +89,7 @@
             </div>
         </div>
     </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -81,22 +81,26 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
         body {
             background-color: #f8f9fa;
         }
+
         .navbar-brand {
             font-weight: 600;
             color: #CD2128;
         }
 
-        .navbar-brand:hover{
+        .navbar-brand:hover {
             color: #CD2128;
         }
+
         .card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             margin-bottom: 1.5rem;
         }
+
         .badge-admin {
             background-color: rgba(67, 97, 238, 0.1);
             color: #4361ee;
         }
+
         .badge-user {
             background-color: rgba(108, 117, 125, 0.1);
             color: #6c757d;
@@ -107,7 +111,8 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
 <body>
     <nav class="navbar navbar-expand-lg navbar-light shadow p-3 mb-5 bg-body rounded">
         <div class="container">
-            <a class="navbar-brand" href="files.php"><img src="image/logo.png" alt="Fashion Optics Ltd.">Fashion Cloud</a>
+            <a class="navbar-brand" href="files.php"><img src="image/logo.png" alt="Fashion Optics Ltd.">Fashion
+                Cloud</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -122,7 +127,8 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                         <a class="nav-link" href="files.php"><i class="bi bi-folder me-1"></i>Back to Files</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" style="color: #CD2128;" href="auth.php?logout=1"><i class="bi bi-box-arrow-right me-1 "></i>Logout</a>
+                        <a class="nav-link fw-bold" style="color: #CD2128;" href="auth.php?logout=1"><i
+                                class="bi bi-box-arrow-right me-1 "></i>Logout</a>
                     </li>
                 </ul>
             </div>
@@ -151,11 +157,13 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                     <div class="row g-3 align-items-end">
                         <div class="col-md-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" placeholder="Enter username" required>
+                            <input type="text" class="form-control" name="username" placeholder="Enter username"
+                                required>
                         </div>
                         <div class="col-md-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Enter password" required>
+                            <input type="password" class="form-control" name="password" placeholder="Enter password"
+                                required>
                         </div>
                         <div class="col-md-3">
                             <label for="role" class="form-label">Role</label>
@@ -193,7 +201,8 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                         </div>
                         <div class="col-md-4">
                             <label for="new_password" class="form-label">New Password</label>
-                            <input type="password" class="form-control" name="new_password" placeholder="Enter new password" required>
+                            <input type="password" class="form-control" name="new_password"
+                                placeholder="Enter new password" required>
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-primary w-100" type="submit">Change Password</button>
@@ -224,7 +233,8 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
                                     <td><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['username']; ?></td>
                                     <td>
-                                        <span class="badge <?php echo $row['role'] === 'admin' ? 'badge-admin' : 'badge-user'; ?>">
+                                        <span
+                                            class="badge <?php echo $row['role'] === 'admin' ? 'badge-admin' : 'badge-user'; ?>">
                                             <?php echo ucfirst($row['role']); ?>
                                         </span>
                                     </td>
@@ -247,12 +257,15 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
         </div>
     </div>
 
-    <footer class="bg-light mt-5 py-3">
+    <footer class="bg-light py-3 mt-auto" style="box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);">
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                 <div class="mb-2 mb-md-0">
                     <p class="mb-0 text-muted">
-                        Copyright © 2025 <a href="https://fg-bd.com/" class="fw-bold text-success text-decoration-none">Fashion Group</a> All rights reserved.
+                        Copyright © 2025
+                        <a href="https://fg-bd.com" target="_blank" class="fw-bold text-success text-decoration-none">
+                            Fashion Group
+                        </a> All rights reserved.
                     </p>
                 </div>
                 <div>

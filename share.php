@@ -42,23 +42,29 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
         }
+
         body {
             display: flex;
             flex-direction: column;
         }
+
         .content {
             flex: 1 0 auto;
         }
+
         .footer {
             flex-shrink: 0;
         }
+
         .preview-container {
             max-width: 900px;
             margin: 0 auto;
         }
+
         .preview-content {
             background-color: #f8f9fa;
             border-radius: 0.375rem;
@@ -66,6 +72,7 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
             margin: 1.5rem 0;
             text-align: center;
         }
+
         .brand-text {
             color: #4361ee;
             font-weight: 600;
@@ -129,12 +136,15 @@ if (isset($_GET['download']) && $_GET['download'] == 1) {
         </div>
     </div>
 
-    <footer class="footer bg-light py-3">
+    <footer class="bg-light py-3 mt-auto" style="box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.1);">
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                 <div class="mb-2 mb-md-0">
                     <p class="mb-0 text-muted">
-                        Copyright © 2025 <a href="https://fg-bd.com/" class="fw-bold text-success text-decoration-none">Fashion Group</a> All rights reserved.
+                        Copyright © 2025
+                        <a href="https://fg-bd.com" target="_blank" class="fw-bold text-success text-decoration-none">
+                            Fashion Group
+                        </a> All rights reserved.
                     </p>
                 </div>
                 <div>
