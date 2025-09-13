@@ -12,59 +12,55 @@
         body {
             background-color: #f8f9fa;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: auto;
         }
 
         .brand-text {
             color: #CD2128;
             font-weight: 600;
         }
+        
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+        }
     </style>
 </head>
 
-<body>
-    <div class="container py-5 flex-grow-1">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card shadow login-container">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <div class="d-flex justify-content-center align-items-center mb-2">
-                                <img src="image/logo.png" alt="Fashion Optics Ltd.">
-                                <h1 class="h3 brand-text ms-1">Fashion Cloud</h1>
-                            </div>
-                            <p class="text-muted text-uppercase fs-6">Secure file sharing platform</p>
+<body class="d-flex flex-column">
+    <div class="container-fluid d-flex flex-grow-1 justify-content-center align-items-center py-5">
+        <div class="login-container">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="d-flex justify-content-center align-items-center mb-2">
+                            <img src="image/logo.png" alt="Fashion Optics Ltd.">
+                            <h1 class="h3 brand-text ms-1">Fashion Cloud</h1>
                         </div>
-
-                        <?php if (!empty($error)): ?>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <?php echo $error; ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-
-                        <form method="POST">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" name="username" id="username"
-                                    placeholder="Enter your username" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" name="password" id="password"
-                                    placeholder="Enter your password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Sign In</button>
-                            <p class="small text-muted mt-3">Powered by <span class="fw-bold"
-                                    style="color: #CD2128">Fashion Optics Ltd.</span></p>
-                        </form>
+                        <p class="text-muted text-uppercase fs-6">Secure file sharing platform</p>
                     </div>
+
+                    <?php if (!empty($error)): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <?php echo $error; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="username"
+                                placeholder="Enter your username" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="password"
+                                placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                        <p class="small text-muted mt-3">Powered by <a href="https://fashionoptics.store" target="_blank" class="fw-bold text-decoration-none"
+                                style="color: #CD2128">Fashion Optics Ltd.</a></p>
+                    </form>
                 </div>
             </div>
         </div>
@@ -89,7 +85,6 @@
             </div>
         </div>
     </footer>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
